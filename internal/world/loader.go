@@ -19,16 +19,16 @@ func Load() *World {
 		panic(err)
 	}
 
-	game := New()
+	gameWorld := New()
 	for _, line := range strings.Split(string(body), "\n") {
 		if line == "$" { // end of file
 			break
 		}
 		zone := loadZone(line)
-		game.Zones = append(game.Zones, zone)
+		gameWorld.Zones = append(gameWorld.Zones, zone)
 	}
 
-	return game
+	return gameWorld
 }
 
 func loadZone(areaName string) *Zone {
@@ -53,12 +53,9 @@ func loadArea(input string) Area {
 	var info Area
 
 	// if no areas, get outta here
-	if !strings.Contains(data.Data, "#AREA") {
+	if err := data.Jump("#AREA"); err != nil {
 		return info
 	}
-
-	start := strings.Index(data.Data, "#AREA")
-	data.Advance(start + 5) // start after #AREA
 
 	for data.Next() != '{' {
 		continue
@@ -94,12 +91,9 @@ func loadHelps(input string) []Help {
 	var infos []Help
 
 	// If no helps, just get outta here.
-	if !strings.Contains(data.Data, "#HELPS") {
+	if err := data.Jump("#HELPS"); err != nil {
 		return infos
 	}
-
-	start := strings.Index(data.Data, "#HELPS")
-	data.Advance(start + 6) // trim off the #HELPS part
 
 	for {
 		// Grab this help section
@@ -130,11 +124,9 @@ func loadShops(input string) []Shop {
 	var infos []Shop
 
 	// if no shops, get outta here
-	if !strings.Contains(data.Data, "#SHOPS") {
+	if err := data.Jump("#SHOPS"); err != nil {
 		return infos
 	}
-	start := strings.Index(data.Data, "#SHOPS")
-	data.Advance(start + 6) // trim off the #SHOPS part
 
 	for {
 		data.Gobble()
@@ -167,11 +159,9 @@ func loadResets(input string) []Reset {
 	var infos []Reset
 
 	// if no resets, get outta here
-	if !strings.Contains(data.Data, "#RESETS") {
+	if err := data.Jump("#RESETS"); err != nil {
 		return infos
 	}
-	start := strings.Index(data.Data, "#RESETS")
-	data.Advance(start + 7) // trim off the #HELPS part
 
 	done := false
 	for !done {
@@ -262,11 +252,9 @@ func loadSpecials(input string) []Special {
 	var infos []Special
 
 	// if no resets, get outta here
-	if !strings.Contains(data.Data, "#SPECIALS") {
+	if err := data.Jump("#SPECIALS"); err != nil {
 		return infos
 	}
-	start := strings.Index(data.Data, "#SPECIALS")
-	data.Advance(start + 9) // trim off the #SPECIALS part
 
 	done := false
 	for !done {
@@ -304,12 +292,9 @@ func loadMobiles(input string) []*Mobile {
 	var infos []*Mobile
 
 	// if no mobs, get out
-	if !strings.Contains(data.Data, "#MOBILES") {
+	if err := data.Jump("#MOBILES"); err != nil {
 		return infos
 	}
-
-	start := strings.Index(data.Data, "#MOBILES")
-	data.Advance(start + 8) // trim off the #MOBILES part
 
 	for {
 		// grab any extraneous whitespace
@@ -364,12 +349,9 @@ func loadRooms(input string) []*Room {
 	var infos []*Room
 
 	// if no rooms, get outta here
-	if !strings.Contains(data.Data, "#ROOMS") {
+	if err := data.Jump("#ROOMS"); err != nil {
 		return infos
 	}
-
-	start := strings.Index(data.Data, "#ROOMS")
-	data.Advance(start + 6) // trim off the #ROOMS part
 
 	data.Gobble()
 
@@ -439,12 +421,9 @@ func loadObjects(input string) []Object {
 	var infos []Object
 
 	// if no objects, get outta here
-	if !strings.Contains(data.Data, "#OBJECTS") {
+	if err := data.Jump("#OBJECTS"); err != nil {
 		return infos
 	}
-
-	start := strings.Index(data.Data, "#OBJECTS")
-	data.Advance(start + 8) // trim off the #OBJECTS part
 
 	// grab any extraneous whitespace
 	data.Gobble()
