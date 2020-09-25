@@ -47,7 +47,7 @@ func TestLexerJump(t *testing.T) {
 
 func TestLexerEOF(t *testing.T) {
 	l := New("foo")
-	l.Advance(3) // go to the end
+	l.index = 3 // go to the end
 
 	assert.True(t, l.EOF())
 }
@@ -202,6 +202,10 @@ func TestNumber(t *testing.T) {
 		{
 			Input:    New("1 2"),
 			Expected: []int{1, 2},
+		},
+		{
+			Input:    New("+12345"),
+			Expected: []int{12345},
 		},
 	}
 

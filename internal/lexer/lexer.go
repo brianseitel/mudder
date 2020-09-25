@@ -11,6 +11,7 @@ type Lexer struct {
 	index int
 }
 
+// New makes a brand new Lexer. Defaults to index 0.
 func New(input string) *Lexer {
 	return &Lexer{
 		data:  input,
@@ -18,21 +19,32 @@ func New(input string) *Lexer {
 	}
 }
 
+// setIndex is used only for testing to set an index
+// to an arbitrary point
 func (l *Lexer) setIndex(i int) *Lexer {
 	l.index = i
 	return l
 }
 
+// Current returns the current index. This does
+// not check to see if it's a valid index. Instead
+// it just panics. Whoops.
 func (l *Lexer) Current() byte {
 	return l.data[l.index]
 }
 
+// Next returns the next byte in the sequence. It
+// does not check whether the next byte is valid.
 func (l *Lexer) Next() byte {
 	l.index++
 
 	return l.Current()
 }
 
+// Peek allows the caller to see what the next byte
+// is without advancing the cursor. If it tries
+// to peek past the end of the lexer body, it
+// will return the last byte instead.
 func (l *Lexer) Peek() byte {
 	if len(l.data) <= l.index+1 {
 		return l.data[len(l.data)-1]
@@ -41,14 +53,20 @@ func (l *Lexer) Peek() byte {
 	return l.data[l.index+1]
 }
 
+// EOF checks whether the current byte is past
+// the end of the file
 func (l *Lexer) EOF() bool {
-	return len(l.data) <= l.index+1
+	return len(l.data) <= l.index
 }
 
+// NextEOF determines whether next byte is past
+// the end of the file
 func (l *Lexer) NextEOF() bool {
 	return len(l.data) <= l.index+1
 }
 
+// Gobble eats any whitespace characters, advancing
+// the index until it reaches a non-whitespace character.
 func (l *Lexer) Gobble() {
 	for {
 		if !isWhitespace(l.Current()) {
@@ -58,10 +76,14 @@ func (l *Lexer) Gobble() {
 	}
 }
 
+// Print returns the rest of the body from the index forward.
 func (l *Lexer) Print() string {
 	return l.data[l.index:]
 }
 
+// Advance moves the cursor up by an arbitrary amount. if
+// the index goes past the length of the body, it will
+// only advance to the last byte.
 func (l *Lexer) Advance(i int) byte {
 	l.index += i
 	if l.index >= len(l.data) {
@@ -70,11 +92,17 @@ func (l *Lexer) Advance(i int) byte {
 	return l.Current()
 }
 
+// Backup will decrement the index and
+// return the current byte.
 func (l *Lexer) Backup() byte {
 	l.index--
 	return l.Current()
 }
 
+// Jump will jump to a particular string point in
+// the body, advancing the index to that point. If
+// the substring is not found, it will return an
+// error.
 func (l *Lexer) Jump(target string) error {
 	start := strings.Index(l.data, target)
 	if start == -1 {
@@ -86,6 +114,9 @@ func (l *Lexer) Jump(target string) error {
 	return nil
 }
 
+// Snapshot is used for debugging and will return
+// up to 15 bytes on either side of the current byte
+// index.
 func (l *Lexer) Snapshot() string {
 	start := l.index - 15
 	if start <= 0 {
@@ -100,6 +131,8 @@ func (l *Lexer) Snapshot() string {
 	return string(l.data[start:l.index]) + "!>" + string(l.data[l.index]) + "<!" + string(l.data[l.index+1:end])
 }
 
+// Word finds the current word slice in the body.
+// If it finds whitespace, it ends.
 func (l *Lexer) Word() string {
 	var c byte
 
@@ -124,6 +157,7 @@ func (l *Lexer) Word() string {
 	}
 }
 
+// Letter returns the next non-whitespace character
 func (l *Lexer) Letter() string {
 	l.Gobble()
 
@@ -132,6 +166,8 @@ func (l *Lexer) Letter() string {
 	return string(out)
 }
 
+// EOL returns each byte up until an end-of-line character.
+// If it reaches the end of the file, it returns nothing.
 func (l *Lexer) EOL() string {
 	var c byte
 	if l.EOF() {
@@ -160,6 +196,8 @@ func (l *Lexer) EOL() string {
 	}
 }
 
+// String returns a tilde-terminated (~) string, ignoring
+// any leading whitespace.
 func (l *Lexer) String() string {
 	var c byte
 	for isWhitespace(l.Current()) {
@@ -190,6 +228,11 @@ func (l *Lexer) String() string {
 	}
 }
 
+// Number returns thenext integer, positive or negative,
+// in the body. It will read either a leading + or - sign.
+// It supports combinations of integers separated by
+// pipes (|). This is useful for flags. If it cannot find
+// a number after clearing leading whitespace, it will panic.
 func (l *Lexer) Number() int {
 	sign := false
 	var c byte
@@ -229,10 +272,13 @@ func (l *Lexer) Number() int {
 	return number
 }
 
+// isWhitespace is used internally to define whitespace values.
 func isWhitespace(c byte) bool {
 	return c == ' ' || c == '\n' || c == '\t' || c == '\r'
 }
 
+// isDigit is used internally to determine whether a byte is
+// a numeric digit or not.
 func isDigit(c byte) bool {
 	_, err := strconv.Atoi(string(c))
 	return err == nil
