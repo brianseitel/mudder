@@ -9,28 +9,45 @@ import (
 func TestLexerCurrent(t *testing.T) {
 	l := New("this is a test")
 
-	assert.Equal(t, byte('s'), l.Current())
+	assert.Equal(t, byte('t'), l.Current())
 }
 
 func TestLexerNext(t *testing.T) {
 	l := New("this is a test")
 
-	assert.Equal(t, byte('i'), l.Next())
-	assert.Equal(t, 2, l.index)
+	assert.Equal(t, byte('h'), l.Next())
+	assert.Equal(t, 1, l.index)
+}
+
+func TestLexerPrint(t *testing.T) {
+	l := New("this is a test")
+
+	assert.Equal(t, "this is a test", l.Print())
 }
 
 func TestLexerPeek(t *testing.T) {
 	l := New("this is a test")
 
-	assert.Equal(t, byte('i'), l.Peek())
-	assert.Equal(t, 1, l.index)
+	assert.Equal(t, byte('h'), l.Peek())
+	assert.Equal(t, 0, l.index)
 
 	l.index = 100
 	assert.Equal(t, byte('t'), l.Peek())
 }
 
+func TestLexerJump(t *testing.T) {
+	l := New("#BAR baz")
+
+	err := l.Jump("baz")
+
+	assert.Nil(t, err)
+	assert.Equal(t, 7, l.index)
+	assert.Error(t, l.Jump("should be an error"))
+}
+
 func TestLexerEOF(t *testing.T) {
 	l := New("foo")
+	l.index = 3 // go to the end
 
 	assert.True(t, l.EOF())
 }
@@ -53,6 +70,7 @@ func TestAdvance(t *testing.T) {
 func TestBackup(t *testing.T) {
 	l := New("this is a test")
 
+	l.Advance(3)
 	assert.Equal(t, byte('s'), l.Current())
 	l.Backup()
 	assert.Equal(t, byte('i'), l.Current())
@@ -65,11 +83,11 @@ func TestSnapshot(t *testing.T) {
 		Expected string
 	}{
 		{
-			Input:    New(`it was many and many a year ago`),
+			Input:    New(`it was many and many a year ago`).setIndex(16),
 			Expected: "t was many and !>m<!any a year ago",
 		},
 		{
-			Input:    New(`short`),
+			Input:    New(`short`).setIndex(3),
 			Expected: "sho!>r<!t",
 		},
 	}
@@ -137,20 +155,14 @@ func TestString(t *testing.T) {
 		Input    *Lexer
 		Expected string
 	}{
-		// {
-		// 	Input: &Lexer{
-		// 		data:  "there can be only one~",
-		// 		index: 0,
-		// 	},
-		// 	Expected: "there can be only one",
-		// },
-		// {
-		// 	Input: &Lexer{
-		// 		data:  "    buncha whitespace up front~",
-		// 		index: 0,
-		// 	},
-		// 	Expected: "buncha whitespace up front",
-		// },
+		{
+			Input:    New("there can be only one~"),
+			Expected: "there can be only one",
+		},
+		{
+			Input:    New("    buncha whitespace up front~"),
+			Expected: "buncha whitespace up front",
+		},
 		{
 			Input:    New("~"),
 			Expected: "",
@@ -190,6 +202,10 @@ func TestNumber(t *testing.T) {
 		{
 			Input:    New("1 2"),
 			Expected: []int{1, 2},
+		},
+		{
+			Input:    New("+12345"),
+			Expected: []int{12345},
 		},
 	}
 
