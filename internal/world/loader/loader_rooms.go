@@ -1,6 +1,9 @@
-package world
+package loader
 
-import "github.com/brianseitel/mudder/internal/lexer"
+import (
+	"github.com/brianseitel/mudder/internal/lexer"
+	"github.com/brianseitel/mudder/internal/world"
+)
 
 /*
 === The #ROOMS section
@@ -73,10 +76,10 @@ An 'E' section (extended description) contains a 'keywords' string and a
 
 The 'S' at the end marks the end of the room.  It is not optional.
 */
-func loadRooms(input string) []*Room {
+func loadRooms(input string) []*world.Room {
 	data := lexer.New(input)
 
-	var infos []*Room
+	var infos []*world.Room
 
 	// if no rooms, get outta here
 	if err := data.Jump("#ROOMS"); err != nil {
@@ -93,7 +96,7 @@ func loadRooms(input string) []*Room {
 			data.Letter()
 		}
 
-		room := &Room{}
+		room := &world.Room{}
 		room.VNUM = data.Number()
 		room.Name = data.String()
 		room.Description = data.String()
@@ -106,7 +109,7 @@ func loadRooms(input string) []*Room {
 
 		for {
 			if data.Current() == 'D' {
-				var d door
+				var d world.Door
 				// get the D
 				data.Letter()
 				d.Door = data.Number()
@@ -122,7 +125,7 @@ func loadRooms(input string) []*Room {
 
 			if data.Current() == 'E' {
 				data.Letter() // 'E' -- unused
-				var xd extendedDescription
+				var xd world.ExtendedDescription
 				xd.Keywords = data.String()
 				xd.Description = data.String()
 				room.ExtendedDescriptions = append(room.ExtendedDescriptions, xd)

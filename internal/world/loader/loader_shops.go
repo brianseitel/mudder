@@ -1,6 +1,9 @@
-package world
+package loader
 
-import "github.com/brianseitel/mudder/internal/lexer"
+import (
+	"github.com/brianseitel/mudder/internal/lexer"
+	"github.com/brianseitel/mudder/internal/world"
+)
 
 /*
 === The #SHOPS section
@@ -48,10 +51,10 @@ an object to a shopkeeper, the shopkeeper will keep it for resale if he, she,
 or it doesn't already have an identical object.  These items do not replenish.
 */
 
-func loadShops(input string) []Shop {
+func loadShops(input string) []world.Shop {
 	data := lexer.New(input)
 
-	var infos []Shop
+	var infos []world.Shop
 
 	// if no shops, get outta here
 	if err := data.Jump("#SHOPS"); err != nil {
@@ -65,7 +68,7 @@ func loadShops(input string) []Shop {
 			break
 		}
 
-		var shop Shop
+		var shop world.Shop
 		shop.Keeper = data.Number()
 		shop.Trade1 = data.Number()
 		shop.Trade2 = data.Number()

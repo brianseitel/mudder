@@ -1,6 +1,9 @@
-package world
+package loader
 
-import "github.com/brianseitel/mudder/internal/lexer"
+import (
+	"github.com/brianseitel/mudder/internal/lexer"
+	"github.com/brianseitel/mudder/internal/world"
+)
 
 // === The #HELPS section
 
@@ -28,10 +31,10 @@ import "github.com/brianseitel/mudder/internal/lexer"
 // If a 'help-text' begins with a leading '.', the leading '.' is stripped off.
 // This provides for an escape mechanism from the usual leading-blank stripping of
 // strings, so that picturesque greeting screens may be used.
-func loadHelps(input string) []Help {
+func loadHelps(input string) []world.Help {
 	data := lexer.New(input)
 
-	var infos []Help
+	var infos []world.Help
 
 	// If no helps, just get outta here.
 	if err := data.Jump("#HELPS"); err != nil {
@@ -40,7 +43,7 @@ func loadHelps(input string) []Help {
 
 	for {
 		// Grab this help section
-		help := Help{}
+		help := world.Help{}
 		help.Level = data.Number()
 		help.Keywords = data.String()
 		if help.Keywords == "$" {

@@ -1,6 +1,9 @@
-package world
+package loader
 
-import "github.com/brianseitel/mudder/internal/lexer"
+import (
+	"github.com/brianseitel/mudder/internal/lexer"
+	"github.com/brianseitel/mudder/internal/world"
+)
 
 // === The #AREA section
 // The syntax of this section is:
@@ -10,10 +13,10 @@ import "github.com/brianseitel/mudder/internal/lexer"
 //     #AREA	{ 5 35} Merc    Prototype for New Area~
 // The first two numbers are recommended level range.  The name is the name of the
 // original author of the area.  The last phrase is the name of the area.
-func loadArea(input string) Area {
+func loadArea(input string) world.Area {
 	data := lexer.New(input)
 
-	var info Area
+	var info world.Area
 
 	// if no areas, get outta here
 	if err := data.Jump("#AREA"); err != nil {

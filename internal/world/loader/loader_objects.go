@@ -1,6 +1,9 @@
-package world
+package loader
 
-import "github.com/brianseitel/mudder/internal/lexer"
+import (
+	"github.com/brianseitel/mudder/internal/lexer"
+	"github.com/brianseitel/mudder/internal/world"
+)
 
 /*
 === The #OBJECTS section
@@ -71,10 +74,10 @@ function 'affect_modify' in handler.c to see exactly which ones are.
 
 An object may have an unlimited number of 'E' and 'A' sections.
 */
-func loadObjects(input string) []Object {
+func loadObjects(input string) []world.Object {
 	data := lexer.New(input)
 
-	var infos []Object
+	var infos []world.Object
 
 	// if no objects, get outta here
 	if err := data.Jump("#OBJECTS"); err != nil {
@@ -91,7 +94,7 @@ func loadObjects(input string) []Object {
 		}
 
 		// Grab this object section
-		object := Object{}
+		object := world.Object{}
 		data.Letter() // '#' -- unused
 		object.VNUM = data.Number()
 		object.Keywords = data.String()
@@ -118,14 +121,14 @@ func loadObjects(input string) []Object {
 		// get extra descriptions
 		for {
 			if data.Current() == 'E' {
-				var xtra extraDescription
+				var xtra world.ExtraDescription
 				data.Letter() // consume the E
 				xtra.Keywords = data.String()
 				xtra.Description = data.String()
 				object.ExtraDescription = append(object.ExtraDescription, xtra)
 				data.Gobble()
 			} else if data.Current() == 'A' {
-				var app apply
+				var app world.Apply
 				data.Letter() // consume the A
 				app.ApplyType = data.Number()
 				app.ApplyValue = data.Number()

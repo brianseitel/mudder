@@ -1,6 +1,9 @@
-package world
+package loader
 
-import "github.com/brianseitel/mudder/internal/lexer"
+import (
+	"github.com/brianseitel/mudder/internal/lexer"
+	"github.com/brianseitel/mudder/internal/world"
+)
 
 /*
 === The #SPECIALS section
@@ -50,10 +53,10 @@ To add a new special function:
     section in an area file.  Any number of mobs may have the same spec-fun.
 
 */
-func loadSpecials(input string) []Special {
+func loadSpecials(input string) []world.Special {
 	data := lexer.New(input)
 
-	var infos []Special
+	var infos []world.Special
 
 	// if no resets, get outta here
 	if err := data.Jump("#SPECIALS"); err != nil {
@@ -69,14 +72,14 @@ func loadSpecials(input string) []Special {
 		switch data.Current() {
 		case 'M':
 			data.Letter()
-			special := specialsMob{}
+			special := world.SpecialsMob{}
 			special.VNUM = data.Number()
 			special.SpecFun = data.Word()
 			special.Comment = data.EOL()
 			infos = append(infos, special)
 		case '*':
 			data.Letter()
-			special := specialsComment{}
+			special := world.SpecialsComment{}
 			special.Comment = data.EOL()
 			infos = append(infos, special)
 		case 'S':

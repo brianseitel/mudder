@@ -59,18 +59,18 @@ type Object struct {
 	Value2           int
 	Value3           int
 	Weight           int
-	ExtraDescription []extraDescription
-	Apply            []apply
+	ExtraDescription []ExtraDescription
+	Apply            []Apply
 }
 
-type extraDescription struct {
+type ExtraDescription struct {
 	Raw string // raw data
 
 	Keywords    string
 	Description string
 }
 
-type apply struct {
+type Apply struct {
 	Raw string // raw data
 
 	ApplyType  int
@@ -84,11 +84,15 @@ type Room struct {
 	Area                 int
 	RoomFlags            int
 	SectorType           int
-	Doors                []door
-	ExtendedDescriptions []extendedDescription
+	Doors                []Door
+	ExtendedDescriptions []ExtendedDescription
+
+	Objects []*Object
+	Mobs    []*Mobile
+	People  []*Player
 }
 
-type door struct {
+type Door struct {
 	Door        int
 	Description string
 	Keywords    string
@@ -97,55 +101,55 @@ type door struct {
 	ToRoom      int
 }
 
-type extendedDescription struct {
+type ExtendedDescription struct {
 	Keywords    string
 	Description string
 }
 
 type Reset interface{}
 
-type resetComment struct {
+type ResetComment struct {
 	Comment string
 }
 
-type resetReadMobile struct {
+type ResetReadMobile struct {
 	VNUM    int
 	Limit   int
 	Room    int
 	Comment string
 }
 
-type resetReadObject struct {
+type ResetReadObject struct {
 	VNUM    int
 	Room    int
 	Comment string
 }
 
-type resetPutObject struct {
+type ResetPutObject struct {
 	VNUM          int
 	ContainerItem int
 	Comment       string
 }
 
-type resetGiveObject struct {
+type ResetGiveObject struct {
 	VNUM    int
 	Comment string
 }
 
-type resetEquipObject struct {
+type ResetEquipObject struct {
 	VNUM         int
 	WearLocation int
 	Comment      string
 }
 
-type resetSetDoorState struct {
+type ResetSetDoorState struct {
 	VNUM    int
 	Door    int
 	State   int
 	Comment string
 }
 
-type resetRandomizeExits struct {
+type ResetRandomizeExits struct {
 	VNUM     int // room vnum
 	LastDoor int
 	Comment  string
@@ -167,11 +171,11 @@ type Shop struct {
 
 type Special interface{}
 
-type specialsComment struct {
+type SpecialsComment struct {
 	Comment string
 }
 
-type specialsMob struct {
+type SpecialsMob struct {
 	VNUM    int
 	SpecFun string
 	Comment string

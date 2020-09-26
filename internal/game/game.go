@@ -4,87 +4,48 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/brianseitel/mudder/internal/world"
+	"github.com/brianseitel/mudder/internal/world/loader"
 )
 
 var gameWorld *Game
 
 type Game struct {
-	World *world.World
-
-	CurrentRoom *world.Room
+	World  *world.World
+	Player *world.Player
 }
 
 func init() {
 	gameWorld = &Game{
-		World: world.Load(),
+		World:  world.New(),
+		Player: nil,
 	}
 
-	gameWorld.CurrentRoom = findRoom(3700)
+	gameWorld.World.Zones = loader.Load()
+	gameWorld.World.Populate()
+
+	gameWorld.Player = &world.Player{
+		CurrentRoom: findRoom(3700),
+	}
 }
 
 func Start() {
 	for {
-		cmd := prompt(gameWorld.CurrentRoom)
-		switch cmd {
-		case "north", "south", "west", "east", "up", "down",
-			"n", "s", "e", "w", "u", "d":
-			gameWorld.move(cmd)
+		input := prompt(gameWorld.Player)
+		if cmd, ok := commandsMap[input]; ok {
+			err := cmd.DoFunc(gameWorld.Player, input)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
 		}
-	}
-}
-
-func (g *Game) move(direction string) {
-	doorCode := -1
-	switch direction {
-	case "north", "n":
-		doorCode = 0
-		direction = "north"
-	case "east", "e":
-		doorCode = 1
-		direction = "east"
-	case "south", "s":
-		doorCode = 2
-		direction = "south"
-	case "west", "w":
-		doorCode = 3
-		direction = "west"
-	case "up", "u":
-		doorCode = 4
-		direction = "up"
-	case "down", "d":
-		doorCode = 5
-		direction = "down"
-	default:
-		fmt.Println("i don't know direction", direction)
-	}
-
-	if doorCode < 0 {
-		fmt.Println("HUH?")
-		return
-	}
-
-	found := false
-	for _, d := range g.CurrentRoom.Doors {
-		if d.Door == doorCode {
-			g.CurrentRoom = findRoom(d.ToRoom)
-			fmt.Println("You go", direction)
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		fmt.Println("That exit doesn't exist!")
 	}
 }
 
 func findRoom(vnum int) *world.Room {
-	for _, area := range gameWorld.World.Zones {
-		for _, room := range area.Rooms {
+	for _, zone := range gameWorld.World.Zones {
+		for _, room := range zone.Rooms {
 			if room.VNUM == vnum {
 				return room
 			}
@@ -94,12 +55,17 @@ func findRoom(vnum int) *world.Room {
 	panic("shit! can't find room")
 }
 
-func prompt(room *world.Room) string {
-	fmt.Println("["+strconv.Itoa(room.VNUM)+"]", room.Name)
-	fmt.Println(room.Description)
+func prompt(player *world.Player) string {
+	cmd, ok := commandsMap["look"]
+	_ = ok
+
+	err := cmd.DoFunc(player, "")
+	if err != nil {
+		panic(err)
+	}
 
 	var doors []string
-	for _, door := range room.Doors {
+	for _, door := range player.CurrentRoom.Doors {
 		var d string
 		switch door.Door {
 		case 0:

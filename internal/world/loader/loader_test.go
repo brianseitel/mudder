@@ -1,8 +1,9 @@
-package world
+package loader
 
 import (
 	"testing"
 
+	"github.com/brianseitel/mudder/internal/world"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -189,41 +190,41 @@ S`
 
 	resets := loadResets(data)
 	// Type M
-	assert.Equal(t, 3700, resets[0].(resetReadMobile).VNUM)
-	assert.Equal(t, 3701, resets[0].(resetReadMobile).Room)
-	assert.Equal(t, "(acolyte of FRAG)", resets[0].(resetReadMobile).Comment)
+	assert.Equal(t, 3700, resets[0].(world.ResetReadMobile).VNUM)
+	assert.Equal(t, 3701, resets[0].(world.ResetReadMobile).Room)
+	assert.Equal(t, "(acolyte of FRAG)", resets[0].(world.ResetReadMobile).Comment)
 
 	// Type D
-	assert.Equal(t, 3700, resets[1].(resetSetDoorState).VNUM)
-	assert.Equal(t, 2, resets[1].(resetSetDoorState).Door)
-	assert.Equal(t, 1, resets[1].(resetSetDoorState).State)
+	assert.Equal(t, 3700, resets[1].(world.ResetSetDoorState).VNUM)
+	assert.Equal(t, 2, resets[1].(world.ResetSetDoorState).Door)
+	assert.Equal(t, 1, resets[1].(world.ResetSetDoorState).State)
 
 	// Type O
-	assert.Equal(t, 3700, resets[2].(resetReadObject).VNUM)
-	assert.Equal(t, 123, resets[2].(resetReadObject).Room)
-	assert.Equal(t, "object read", resets[2].(resetReadObject).Comment)
+	assert.Equal(t, 3700, resets[2].(world.ResetReadObject).VNUM)
+	assert.Equal(t, 123, resets[2].(world.ResetReadObject).Room)
+	assert.Equal(t, "object read", resets[2].(world.ResetReadObject).Comment)
 
 	// Type P
-	assert.Equal(t, 3700, resets[3].(resetPutObject).VNUM)
-	assert.Equal(t, 123, resets[3].(resetPutObject).ContainerItem)
-	assert.Equal(t, "put in a container", resets[3].(resetPutObject).Comment)
+	assert.Equal(t, 3700, resets[3].(world.ResetPutObject).VNUM)
+	assert.Equal(t, 123, resets[3].(world.ResetPutObject).ContainerItem)
+	assert.Equal(t, "put in a container", resets[3].(world.ResetPutObject).Comment)
 
 	// Type G
-	assert.Equal(t, 3700, resets[4].(resetGiveObject).VNUM)
-	assert.Equal(t, "give an object", resets[4].(resetGiveObject).Comment)
+	assert.Equal(t, 3700, resets[4].(world.ResetGiveObject).VNUM)
+	assert.Equal(t, "give an object", resets[4].(world.ResetGiveObject).Comment)
 
 	// Type E
-	assert.Equal(t, 3700, resets[5].(resetEquipObject).VNUM)
-	assert.Equal(t, 123, resets[5].(resetEquipObject).WearLocation)
-	assert.Equal(t, "equip an item", resets[5].(resetEquipObject).Comment)
+	assert.Equal(t, 3700, resets[5].(world.ResetEquipObject).VNUM)
+	assert.Equal(t, 123, resets[5].(world.ResetEquipObject).WearLocation)
+	assert.Equal(t, "equip an item", resets[5].(world.ResetEquipObject).Comment)
 
 	// Type R
-	assert.Equal(t, 3700, resets[6].(resetRandomizeExits).VNUM)
-	assert.Equal(t, 99, resets[6].(resetRandomizeExits).LastDoor)
-	assert.Equal(t, "a door", resets[6].(resetRandomizeExits).Comment)
+	assert.Equal(t, 3700, resets[6].(world.ResetRandomizeExits).VNUM)
+	assert.Equal(t, 99, resets[6].(world.ResetRandomizeExits).LastDoor)
+	assert.Equal(t, "a door", resets[6].(world.ResetRandomizeExits).Comment)
 
 	// Type * (Comment)
-	assert.Equal(t, "this is a comment", resets[7].(resetComment).Comment)
+	assert.Equal(t, "this is a comment", resets[7].(world.ResetComment).Comment)
 }
 
 func TestLoadResetsNoResets(t *testing.T) {
@@ -252,13 +253,13 @@ S`
 	specials := loadSpecials(data)
 
 	assert.Len(t, specials, 3)
-	assert.Equal(t, 3707, specials[0].(specialsMob).VNUM)
-	assert.Equal(t, "spec_cast_adept", specials[0].(specialsMob).SpecFun)
+	assert.Equal(t, 3707, specials[0].(world.SpecialsMob).VNUM)
+	assert.Equal(t, "spec_cast_adept", specials[0].(world.SpecialsMob).SpecFun)
 
-	assert.Equal(t, 3714, specials[1].(specialsMob).VNUM)
-	assert.Equal(t, "spec_fido", specials[1].(specialsMob).SpecFun)
+	assert.Equal(t, 3714, specials[1].(world.SpecialsMob).VNUM)
+	assert.Equal(t, "spec_fido", specials[1].(world.SpecialsMob).SpecFun)
 
-	assert.Equal(t, "this is a test fun", specials[2].(specialsComment).Comment)
+	assert.Equal(t, "this is a test fun", specials[2].(world.SpecialsComment).Comment)
 }
 
 func TestLoadMobiles(t *testing.T) {

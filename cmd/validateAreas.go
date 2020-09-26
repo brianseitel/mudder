@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/brianseitel/mudder/internal/world"
+	"github.com/brianseitel/mudder/internal/world/loader"
 	"github.com/spf13/cobra"
 )
 
@@ -11,7 +11,7 @@ var loadAreasCmd = &cobra.Command{
 	Short: "Load the areas into memory",
 	Long:  `Load all the areas into memory`,
 	Run: func(cmd *cobra.Command, args []string) {
-		world.Load()
+		loader.Load()
 	},
 }
 

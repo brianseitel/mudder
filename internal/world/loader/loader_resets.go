@@ -1,6 +1,9 @@
-package world
+package loader
 
-import "github.com/brianseitel/mudder/internal/lexer"
+import (
+	"github.com/brianseitel/mudder/internal/lexer"
+	"github.com/brianseitel/mudder/internal/world"
+)
 
 /*
 === The #RESETS section
@@ -128,10 +131,10 @@ results.
 
 Any line (except an 'S' line) may have a comment at the end.
 */
-func loadResets(input string) []Reset {
+func loadResets(input string) []world.Reset {
 	data := lexer.New(input)
 
-	var infos []Reset
+	var infos []world.Reset
 
 	// if no resets, get outta here
 	if err := data.Jump("#RESETS"); err != nil {
@@ -147,7 +150,7 @@ func loadResets(input string) []Reset {
 		switch data.Current() {
 		case 'M':
 			data.Letter() // grab the M
-			reset := resetReadMobile{}
+			reset := world.ResetReadMobile{}
 			data.Number() // first number -- unused
 			reset.VNUM = data.Number()
 			reset.Limit = data.Number()
@@ -156,7 +159,7 @@ func loadResets(input string) []Reset {
 			infos = append(infos, reset)
 		case 'O':
 			data.Letter() // grab the D
-			reset := resetReadObject{}
+			reset := world.ResetReadObject{}
 			data.Number() // first number -- unused
 			reset.VNUM = data.Number()
 			data.Number() // third number -- unused
@@ -165,7 +168,7 @@ func loadResets(input string) []Reset {
 			infos = append(infos, reset)
 		case 'P':
 			data.Letter() // grab the P
-			reset := resetPutObject{}
+			reset := world.ResetPutObject{}
 			data.Number() // first number -- unused
 			reset.VNUM = data.Number()
 			data.Number() // third number -- unused
@@ -174,7 +177,7 @@ func loadResets(input string) []Reset {
 			infos = append(infos, reset)
 		case 'G':
 			data.Letter() // grab the G
-			reset := resetGiveObject{}
+			reset := world.ResetGiveObject{}
 			data.Number() // first number -- unused
 			reset.VNUM = data.Number()
 			data.Number() // third number -- unused
@@ -182,7 +185,7 @@ func loadResets(input string) []Reset {
 			infos = append(infos, reset)
 		case 'E':
 			data.Letter() // grab the E
-			reset := resetEquipObject{}
+			reset := world.ResetEquipObject{}
 			data.Number() // first number -- unused
 			reset.VNUM = data.Number()
 			data.Number() // third number -- unused
@@ -191,7 +194,7 @@ func loadResets(input string) []Reset {
 			infos = append(infos, reset)
 		case 'D':
 			data.Letter() // grab the D
-			reset := resetSetDoorState{}
+			reset := world.ResetSetDoorState{}
 			data.Number() // first number -- unused
 			reset.VNUM = data.Number()
 			reset.Door = data.Number()
@@ -200,7 +203,7 @@ func loadResets(input string) []Reset {
 			infos = append(infos, reset)
 		case 'R':
 			data.Letter() // grab the D
-			reset := resetRandomizeExits{}
+			reset := world.ResetRandomizeExits{}
 			data.Number() // first number -- unused
 			reset.VNUM = data.Number()
 			reset.LastDoor = data.Number()
@@ -208,7 +211,7 @@ func loadResets(input string) []Reset {
 			infos = append(infos, reset)
 		case '*':
 			data.Letter() // grab the D
-			reset := resetComment{}
+			reset := world.ResetComment{}
 			reset.Comment = data.EOL()
 			infos = append(infos, reset)
 		case 'S':

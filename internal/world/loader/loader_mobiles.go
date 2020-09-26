@@ -1,6 +1,9 @@
-package world
+package loader
 
-import "github.com/brianseitel/mudder/internal/lexer"
+import (
+	"github.com/brianseitel/mudder/internal/lexer"
+	"github.com/brianseitel/mudder/internal/world"
+)
 
 /*
 === The #MOBILES section
@@ -58,10 +61,10 @@ Merc generates these values internally based on the level of the mobile.
 
 The 'sex' value may be 0 for neutral, 1 for male, and 2 for female.
 */
-func loadMobiles(input string) []*Mobile {
+func loadMobiles(input string) []*world.Mobile {
 	data := lexer.New(input)
 
-	var infos []*Mobile
+	var infos []*world.Mobile
 
 	// if no mobs, get out
 	if err := data.Jump("#MOBILES"); err != nil {
@@ -79,7 +82,7 @@ func loadMobiles(input string) []*Mobile {
 
 		// Grab this mob
 		data.Letter() // Gobble initial '#'
-		mob := &Mobile{}
+		mob := &world.Mobile{}
 		mob.VNUM = data.Number()
 		mob.Keywords = data.String()
 		mob.ShortDescription = data.String()

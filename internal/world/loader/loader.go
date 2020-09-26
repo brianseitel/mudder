@@ -1,38 +1,36 @@
-package world
+package loader
 
 import (
 	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"github.com/brianseitel/mudder/internal/world"
 )
 
-func New() *World {
-	return &World{}
-}
-
-func Load() *World {
+func Load() []*world.Zone {
 	body, err := ioutil.ReadFile("areas/area.lst")
 	if err != nil {
 		panic(err)
 	}
 
-	gameWorld := New()
+	zones := []*world.Zone{}
 	for _, line := range strings.Split(string(body), "\n") {
 		if line == "$" { // end of file
 			break
 		}
 		zone := loadZone(line)
-		gameWorld.Zones = append(gameWorld.Zones, zone)
+		zones = append(zones, zone)
 	}
 
-	return gameWorld
+	return zones
 }
 
-func loadZone(areaName string) *Zone {
+func loadZone(areaName string) *world.Zone {
 	data := loadFile(areaName)
 
-	zone := &Zone{}
+	zone := &world.Zone{}
 	zone.Area = loadArea(data)
 	zone.Helps = loadHelps(data)
 	zone.Mobiles = loadMobiles(data)
