@@ -1,7 +1,7 @@
 package world
 
 import (
-	"fmt"
+	"github.com/rs/zerolog/log"
 )
 
 type World struct {
@@ -73,6 +73,6 @@ func findRoom(w *World, vnum int) *Room {
 		}
 	}
 
-	fmt.Println("Cannot find room", vnum)
+	log.Info().Int("vnum", vnum).Msg("Cannot find room")
 	return &Room{}
 }

@@ -2,7 +2,6 @@ package game
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/brianseitel/mudder/internal/world"
@@ -11,6 +10,7 @@ import (
 type commandFunc func(ch *world.Player, args string) error
 
 type Command struct {
+	Keyword         string
 	DoFunc          commandFunc
 	MinimumPosition int
 	MinimumLevel    int
@@ -34,19 +34,19 @@ const (
 	LOG_DEAD
 )
 
-var commandsMap = map[string]Command{
+var commandsMap = []Command{
 	// Common movement commands
-	"north": {doNorth, 0, 0, 0},
-	"south": {doSouth, 0, 0, 0},
-	"west":  {doWest, 0, 0, 0},
-	"east":  {doEast, 0, 0, 0},
-	"up":    {doUp, 0, 0, 0},
-	"down":  {doDown, 0, 0, 0},
+	{"north", doNorth, 0, 0, 0},
+	{"south", doSouth, 0, 0, 0},
+	{"west", doWest, 0, 0, 0},
+	{"east", doEast, 0, 0, 0},
+	{"up", doUp, 0, 0, 0},
+	{"down", doDown, 0, 0, 0},
 
 	// Miscellaneous
-	"look": {doLook, POS_DEAD, 0, LOG_NORMAL},
-	"qui":  {doQui, POS_DEAD, 0, LOG_NORMAL},
-	"quit": {doQuit, POS_DEAD, 0, LOG_NORMAL},
+	{"look", doLook, POS_DEAD, 0, LOG_NORMAL},
+	{"qui", doQui, POS_DEAD, 0, LOG_NORMAL},
+	{"quit", doQuit, POS_DEAD, 0, LOG_NORMAL},
 }
 
 func doQui(ch *world.Player, args string) error {
@@ -54,7 +54,7 @@ func doQui(ch *world.Player, args string) error {
 }
 
 func doQuit(ch *world.Player, args string) error {
-	fmt.Println("Seeya!")
+	ch.Send("Seeya!")
 	os.Exit(1)
 	return nil
 }

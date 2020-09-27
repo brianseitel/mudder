@@ -64,7 +64,7 @@ func doMove(ch *world.Player, direction string) error {
 	for _, d := range ch.CurrentRoom.Doors {
 		if d.Door == doorCode {
 			ch.CurrentRoom = findRoom(d.ToRoom)
-			fmt.Println("You go", direction)
+			ch.Send(fmt.Sprintf("You go %s.\n", direction))
 			found = true
 			break
 		}
