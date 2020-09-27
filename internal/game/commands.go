@@ -7,7 +7,7 @@ import (
 	"github.com/brianseitel/mudder/internal/world"
 )
 
-type commandFunc func(ch *world.Player, args string) error
+type commandFunc func(ch *world.Character, args string) error
 
 type Command struct {
 	Keyword         string
@@ -49,11 +49,11 @@ var commandsMap = []Command{
 	{"quit", doQuit, POS_DEAD, 0, LOG_NORMAL},
 }
 
-func doQui(ch *world.Player, args string) error {
+func doQui(ch *world.Character, args string) error {
 	return errors.New(`You must spell out "quit" in order to leave.`)
 }
 
-func doQuit(ch *world.Player, args string) error {
+func doQuit(ch *world.Character, args string) error {
 	ch.Send("Seeya!")
 	os.Exit(1)
 	return nil

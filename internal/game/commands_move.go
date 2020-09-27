@@ -7,31 +7,31 @@ import (
 	"github.com/brianseitel/mudder/internal/world"
 )
 
-func doNorth(ch *world.Player, args string) error {
+func doNorth(ch *world.Character, args string) error {
 	return doMove(ch, "north")
 }
 
-func doSouth(ch *world.Player, args string) error {
+func doSouth(ch *world.Character, args string) error {
 	return doMove(ch, "south")
 }
 
-func doEast(ch *world.Player, args string) error {
+func doEast(ch *world.Character, args string) error {
 	return doMove(ch, "east")
 }
 
-func doWest(ch *world.Player, args string) error {
+func doWest(ch *world.Character, args string) error {
 	return doMove(ch, "west")
 }
 
-func doUp(ch *world.Player, args string) error {
+func doUp(ch *world.Character, args string) error {
 	return doMove(ch, "up")
 }
 
-func doDown(ch *world.Player, args string) error {
+func doDown(ch *world.Character, args string) error {
 	return doMove(ch, "down")
 }
 
-func doMove(ch *world.Player, direction string) error {
+func doMove(ch *world.Character, direction string) error {
 	var doorCode int
 	switch direction {
 	case "north", "n":

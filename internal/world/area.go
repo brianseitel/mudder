@@ -29,21 +29,6 @@ type Help struct {
 	Text     string
 }
 
-type Mobile struct {
-	Raw string // raw data
-
-	VNUM             int
-	Keywords         string
-	ShortDescription string
-	LongDescription  string
-	Description      string
-	ActFlags         int
-	AffectedFlags    int
-	Alignment        int
-	Level            int
-	Sex              int
-}
-
 type Object struct {
 	Raw string // raw data
 
@@ -75,30 +60,6 @@ type Apply struct {
 
 	ApplyType  int
 	ApplyValue int
-}
-
-type Room struct {
-	VNUM                 int
-	Name                 string
-	Description          string
-	Area                 int
-	RoomFlags            int
-	SectorType           int
-	Doors                []Door
-	ExtendedDescriptions []ExtendedDescription
-
-	Objects []*Object
-	Mobs    []*Mobile
-	People  []*Player
-}
-
-type Door struct {
-	Door        int
-	Description string
-	Keywords    string
-	Locks       int
-	Key         int
-	ToRoom      int
 }
 
 type ExtendedDescription struct {

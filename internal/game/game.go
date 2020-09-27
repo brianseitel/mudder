@@ -16,34 +16,34 @@ import (
 var gameWorld *Game
 
 type Game struct {
-	World  *world.World
-	Player *world.Player
+	World     *world.World
+	Character *world.Character
 }
 
 func init() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	gameWorld = &Game{
-		World:  world.New(),
-		Player: nil,
+		World:     world.New(),
+		Character: nil,
 	}
 
 	gameWorld.World.Zones = loader.Load()
 	gameWorld.World.Populate()
 
 	findRoom(1324236)
-	gameWorld.Player = &world.Player{
+	gameWorld.Character = &world.Character{
 		CurrentRoom: findRoom(3700),
 	}
 }
 
 func Start() {
 	for {
-		input := prompt(gameWorld.Player)
+		input := prompt(gameWorld.Character)
 
 		err := interpret(input)
 		if err != nil {
-			gameWorld.Player.Send(err.Error())
+			gameWorld.Character.Send(err.Error())
 		}
 	}
 }
@@ -63,14 +63,14 @@ func interpret(input string) error {
 	if !found {
 		for _, social := range socials {
 			if strings.HasPrefix(social.Keyword, input) {
-				err := doSocial(gameWorld.Player, social, input)
+				err := doSocial(gameWorld.Character, social, input)
 				return err
 			}
 		}
 	}
 
 	if found {
-		err := cmd.DoFunc(gameWorld.Player, input)
+		err := cmd.DoFunc(gameWorld.Character, input)
 		return err
 	}
 	return errors.New("command not found")
@@ -89,14 +89,14 @@ func findRoom(vnum int) *world.Room {
 	return &world.Room{}
 }
 
-func prompt(player *world.Player) string {
+func prompt(Character *world.Character) string {
 	err := interpret("look")
 	if err != nil {
 		panic(err)
 	}
 
 	var doors []string
-	for _, door := range player.CurrentRoom.Doors {
+	for _, door := range Character.CurrentRoom.Doors {
 		var d string
 		switch door.Door {
 		case 0:
@@ -115,7 +115,7 @@ func prompt(player *world.Player) string {
 		doors = append(doors, d)
 	}
 
-	player.Send(fmt.Sprintf("[%s]\n", strings.Join(doors, " ")))
+	Character.Send(fmt.Sprintf("[%s]\n", strings.Join(doors, " ")))
 
 	reader := bufio.NewReader(os.Stdin)
 	text, _ := reader.ReadString('\n')

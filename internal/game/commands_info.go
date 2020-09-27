@@ -2,8 +2,15 @@ package game
 
 import "github.com/brianseitel/mudder/internal/world"
 
+const (
+	ActToCharacter = iota
+	ActToVictim
+	ActToRoom
+	ActToNotVictim
+)
+
 // doLook shows the world to the character
-func doLook(ch *world.Player, args string) error {
+func doLook(ch *world.Character, args string) error {
 	ch.Send(ch.CurrentRoom.Name)
 	ch.Send("")
 

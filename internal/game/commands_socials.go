@@ -1,14 +1,19 @@
 package game
 
-import "github.com/brianseitel/mudder/internal/world"
+import (
+	"github.com/brianseitel/mudder/internal/world"
+)
 
 type Social struct {
 	Keyword string
 	Actions [7]string
 }
 
-func doSocial(ch *world.Player, social Social, args string) error {
-	ch.Send(social.Actions[0])
+func doSocial(ch *world.Character, social Social, args string) error {
+	if args == "" {
+		ch.Send(social.Actions[0])
+		return nil
+	}
 	return nil
 }
 
@@ -16,13 +21,13 @@ var socials = []Social{
 	{
 		Keyword: "accuse",
 		Actions: [7]string{
-			"Accuse whom?",
-			"$n is in an accusing mood.",
-			"You look accusingly at $M.",
-			"$n looks accusingly at $N.",
-			"$n looks accusingly at you.",
-			"You accuse yourself.",
-			"$n seems to have a bad conscience.",
+			"Accuse whom?",                       // no target
+			"$n is in an accusing mood.",         // others -> Character
+			"You look accusingly at $M.",         // Character -> target
+			"$n looks accusingly at $N.",         // others -> see Character -> target
+			"$n looks accusingly at you.",        // target -> Character
+			"You accuse yourself.",               // Character -> Character
+			"$n seems to have a bad conscience.", // others see Character->Character
 		},
 	},
 	{
