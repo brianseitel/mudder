@@ -101,7 +101,7 @@ func loadObjects(input string) []world.Object {
 		object.ShortDescription = data.String()
 		object.LongDescription = data.String()
 
-		data.String() // action descriotion -- unused
+		_ = data.String() // action description -- unused
 
 		object.ItemType = data.Number()
 		object.ExtraFlags = data.Number()

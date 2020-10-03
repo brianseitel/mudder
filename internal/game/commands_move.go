@@ -73,5 +73,7 @@ func doMove(ch *world.Character, direction string) error {
 	if !found {
 		return errors.New("That room doesn't exist!")
 	}
+
+	_ = doLook(ch, "auto")
 	return nil
 }

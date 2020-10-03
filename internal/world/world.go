@@ -59,6 +59,25 @@ func (w *World) Populate() {
 						room.Mobs = append(room.Mobs, &mob)
 					}
 				}
+			case ResetReadObject:
+				room := findRoom(w, res.Room)
+
+				// See if this object already exists in the room
+				// if it does, don't add it.
+				add := true
+				for _, obj := range room.Objects {
+					if obj.VNUM == res.VNUM {
+						add = false
+						break
+					}
+				}
+
+				if add {
+					obj, ok := w.Objects[res.VNUM]
+					if ok {
+						room.Objects = append(room.Objects, &obj)
+					}
+				}
 			}
 		}
 	}

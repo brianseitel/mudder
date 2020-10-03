@@ -43,8 +43,18 @@ var commandsMap = []Command{
 	{"up", doUp, 0, 0, 0},
 	{"down", doDown, 0, 0, 0},
 
-	// Miscellaneous
+	// info commands
 	{"look", doLook, POS_DEAD, 0, LOG_NORMAL},
+	{"scan", doScan, POS_DEAD, 0, LOG_NORMAL},
+
+	// object commands
+	{"get", doGet, POS_DEAD, 0, LOG_NORMAL},
+	{"drop", doDrop, POS_DEAD, 0, LOG_NORMAL},
+
+	// player commands
+	{"inventory", doInventory, POS_DEAD, 0, LOG_NORMAL},
+
+	// Miscellaneous
 	{"qui", doQui, POS_DEAD, 0, LOG_NORMAL},
 	{"quit", doQuit, POS_DEAD, 0, LOG_NORMAL},
 }

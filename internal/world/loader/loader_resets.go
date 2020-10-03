@@ -158,7 +158,7 @@ func loadResets(input string) []world.Reset {
 			reset.Comment = data.EOL()
 			infos = append(infos, reset)
 		case 'O':
-			data.Letter() // grab the D
+			data.Letter() // grab the O
 			reset := world.ResetReadObject{}
 			data.Number() // first number -- unused
 			reset.VNUM = data.Number()

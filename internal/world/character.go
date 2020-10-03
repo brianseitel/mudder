@@ -1,6 +1,10 @@
 package world
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/fatih/color"
+)
 
 type Character struct {
 	IndexData *Mobile
@@ -77,7 +81,7 @@ func (p *Character) Send(str interface{}) {
 
 func (p *Character) ShowList(things []*Object) {
 	for _, thing := range things {
-		p.Send(thing.ShortDescription)
+		p.Send(cyan(thing.LongDescription))
 	}
 }
 
@@ -87,8 +91,10 @@ func (p *Character) ShowPeople(people []*Character) {
 	}
 }
 
-func (p *Character) ShowMobs(mobs []*Mobile) {
-	for _, mob := range mobs {
-		p.Send(mob.LongDescription)
+var cyan = color.New(color.FgCyan).SprintFunc()
+
+func showMobs(ch *Character, room *Room) {
+	for _, mob := range room.Mobs {
+		ch.Send(cyan(mob.LongDescription))
 	}
 }

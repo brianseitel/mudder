@@ -98,10 +98,10 @@ func TestSnapshot(t *testing.T) {
 }
 
 func TestWord(t *testing.T) {
-	l := New("foo bar")
+	l := New("look")
 
-	assert.Equal(t, "foo", l.Word())
-	assert.Equal(t, "bar", l.Word())
+	assert.Equal(t, "look", l.Word())
+	assert.Equal(t, "", l.Word())
 }
 
 func TestLetter(t *testing.T) {

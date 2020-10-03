@@ -7,8 +7,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/brianseitel/mudder/internal/lexer"
 	"github.com/brianseitel/mudder/internal/world"
 	"github.com/brianseitel/mudder/internal/world/loader"
+	"github.com/fatih/color"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -20,7 +22,7 @@ type Game struct {
 	Character *world.Character
 }
 
-func init() {
+func bootstrap() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	gameWorld = &Game{
@@ -38,6 +40,9 @@ func init() {
 }
 
 func Start() {
+	bootstrap()
+
+	_ = interpret("look")
 	for {
 		input := prompt(gameWorld.Character)
 
@@ -49,11 +54,15 @@ func Start() {
 }
 
 func interpret(input string) error {
+	if len(strings.TrimSpace(input)) == 0 {
+		return nil
+	}
 	var cmd Command
 
 	found := false
+	word, args := lexer.SplitArgs(input)
 	for _, command := range commandsMap {
-		if strings.HasPrefix(command.Keyword, input) {
+		if strings.HasPrefix(command.Keyword, word) {
 			cmd = command
 			found = true
 			break
@@ -70,10 +79,10 @@ func interpret(input string) error {
 	}
 
 	if found {
-		err := cmd.DoFunc(gameWorld.Character, input)
+		err := cmd.DoFunc(gameWorld.Character, args)
 		return err
 	}
-	return errors.New("command not found")
+	return errors.New("command not found: " + input)
 }
 
 func findRoom(vnum int) *world.Room {
@@ -89,33 +98,16 @@ func findRoom(vnum int) *world.Room {
 	return &world.Room{}
 }
 
-func prompt(Character *world.Character) string {
-	err := interpret("look")
-	if err != nil {
-		panic(err)
-	}
+var red = color.New(color.FgRed).SprintFunc()
+var white = color.New(color.FgWhite).SprintFunc()
+var yellow = color.New(color.FgYellow).SprintFunc()
 
-	var doors []string
-	for _, door := range Character.CurrentRoom.Doors {
-		var d string
-		switch door.Door {
-		case 0:
-			d = "north"
-		case 1:
-			d = "east"
-		case 2:
-			d = "south"
-		case 3:
-			d = "west"
-		case 4:
-			d = "up"
-		case 5:
-			d = "down"
-		}
-		doors = append(doors, d)
-	}
+func prompt(ch *world.Character) string {
+	hp := red(fmt.Sprintf("<%d/%dhp>", ch.HitPoints, ch.MaxHitPoints))
+	mana := white(fmt.Sprintf("<%d/%dm>", ch.Mana, ch.MaxMana))
+	mv := yellow(fmt.Sprintf("<%d/%dmv>", ch.Movement, ch.MaxMovement))
 
-	Character.Send(fmt.Sprintf("[%s]\n", strings.Join(doors, " ")))
+	ch.Send(fmt.Sprintf("%s%s%s", hp, mana, mv))
 
 	reader := bufio.NewReader(os.Stdin)
 	text, _ := reader.ReadString('\n')

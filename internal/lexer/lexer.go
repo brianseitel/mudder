@@ -145,15 +145,16 @@ func (l *Lexer) Word() string {
 			word += string(c)
 			return word
 		}
+		word += string(c)
+		if l.NextEOF() {
+			l.data += " "
+			return word
+		}
+		c = l.Next()
 		if c == ' ' || c == '\n' || c == '\r' {
 			return word
 		}
 
-		word += string(c)
-		if l.NextEOF() {
-			return word
-		}
-		c = l.Next()
 	}
 }
 
@@ -270,6 +271,16 @@ func (l *Lexer) Number() int {
 		number += l.Number()
 	}
 	return number
+}
+
+func SplitArgs(input string) (string, string) {
+	words := strings.Fields(input)
+	if len(words) == 1 {
+		return input, ""
+	} else if len(words) > 1 {
+		return words[0], strings.Join(words[1:], " ")
+	}
+	return "", ""
 }
 
 // isWhitespace is used internally to define whitespace values.
