@@ -1,6 +1,8 @@
 package world
 
-import "strings"
+import (
+	"strings"
+)
 
 type Room struct {
 	VNUM                 int
@@ -13,7 +15,7 @@ type Room struct {
 	ExtendedDescriptions []ExtendedDescription
 
 	Objects []*Object
-	Mobs    []*Mobile
+	Mobs    []*Character
 	People  []*Character
 }
 
@@ -43,4 +45,13 @@ func (r *Room) FindCharacterByName(name string) *Character {
 	}
 
 	return nil
+}
+
+func (r *Room) RemovePerson(ch *Character) {
+	for i, c := range r.People {
+		if c == ch {
+			r.People = r.People[:i+copy(r.People[i:], r.People[i+1:])]
+			return
+		}
+	}
 }

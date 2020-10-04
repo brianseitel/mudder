@@ -16,7 +16,9 @@ type Character struct {
 	PCData *PCData
 
 	// Core character data
+	VNUM             int // used for mobs
 	Name             string
+	Keywords         string // "name" for mobs
 	ShortDescription string
 	LongDescription  string
 	Description      string
@@ -50,14 +52,17 @@ type Character struct {
 	Alignment int
 
 	// Fight stuff
-	Hitroll int
-	Damroll int
-	Armor   int
+	Fighting *Character
+	Hitroll  int
+	Damroll  int
+	Armor    int
 }
 
 type PCData struct {
 	Password string
 	Title    string
+
+	Level int
 
 	Bamfin  string
 	Bamfout string
@@ -79,6 +84,10 @@ func (p *Character) Send(str interface{}) {
 	fmt.Println(str)
 }
 
+func (p *Character) Print(str interface{}) {
+	fmt.Print(str)
+}
+
 func (p *Character) ShowList(things []*Object) {
 	for _, thing := range things {
 		p.Send(cyan(thing.LongDescription))
@@ -86,15 +95,9 @@ func (p *Character) ShowList(things []*Object) {
 }
 
 func (p *Character) ShowPeople(people []*Character) {
-	for _, Character := range people {
-		p.Send(Character.Name + " is here.")
+	for _, ch := range people {
+		p.Send(ch.ShortDescription)
 	}
 }
 
 var cyan = color.New(color.FgCyan).SprintFunc()
-
-func showMobs(ch *Character, room *Room) {
-	for _, mob := range room.Mobs {
-		ch.Send(cyan(mob.LongDescription))
-	}
-}

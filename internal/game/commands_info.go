@@ -6,6 +6,7 @@ import (
 
 	"github.com/brianseitel/mudder/internal/world"
 	"github.com/fatih/color"
+	"github.com/sanity-io/litter"
 )
 
 const (
@@ -41,15 +42,13 @@ func doLook(ch *world.Character, args string) error {
 		}
 
 		ch.Send(fmt.Sprintf("[Exits: %s]\n", strings.Join(doors, " ")))
-
 		ch.Send(ch.CurrentRoom.Description)
-
 		ch.ShowList(ch.CurrentRoom.Objects)
-		ch.ShowPeople(ch.CurrentRoom.People)
-		showMobs(ch, ch.CurrentRoom)
+		showPeople(ch, ch.CurrentRoom)
+
 	} else {
 		// check mobs in room to see if we're looking at that
-		for _, mob := range ch.CurrentRoom.Mobs {
+		for _, mob := range ch.CurrentRoom.People {
 			if strings.HasPrefix(mob.Keywords, args) {
 				ch.Send(mob.Description)
 				return nil
@@ -69,6 +68,17 @@ func doLook(ch *world.Character, args string) error {
 			}
 		}
 		ch.Send("You don't see that here.")
+	}
+	return nil
+}
+
+func doInspect(ch *world.Character, args string) error {
+	// check mobs in room to see if we're looking at that
+	for _, mob := range ch.CurrentRoom.People {
+		if strings.HasPrefix(mob.Keywords, args) {
+			litter.Dump(mob)
+			return nil
+		}
 	}
 	return nil
 }
@@ -93,8 +103,8 @@ func doScan(ch *world.Character, args string) error {
 				dir = "[down]"
 			}
 			ch.Send(dir)
-			if len(room.Mobs) > 0 {
-				showMobs(ch, room)
+			if len(room.People) > 0 {
+				showPeople(ch, room)
 			} else {
 				ch.Send(blue("there's no one here"))
 			}
@@ -107,8 +117,8 @@ func doScan(ch *world.Character, args string) error {
 var cyan = color.New(color.FgCyan).SprintFunc()
 var blue = color.New(color.FgBlue).SprintFunc()
 
-func showMobs(ch *world.Character, room *world.Room) {
-	for _, mob := range room.Mobs {
+func showPeople(ch *world.Character, room *world.Room) {
+	for _, mob := range room.People {
 		ch.Send(cyan(mob.LongDescription))
 	}
 }

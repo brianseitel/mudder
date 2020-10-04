@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/brianseitel/mudder/internal/positions"
 	"github.com/brianseitel/mudder/internal/world"
 )
 
@@ -16,17 +17,6 @@ type Command struct {
 	MinimumLevel    int
 	LoggingLevel    int
 }
-
-const (
-	POS_DEAD = iota
-	POS_MORTAL
-	POS_INCAP
-	POS_STUNNED
-	POS_SLEEPING
-	POS_RESTING
-	POS_FIGHTING
-	POS_STANDING
-)
 
 const (
 	LOG_NORMAL = iota
@@ -44,19 +34,23 @@ var commandsMap = []Command{
 	{"down", doDown, 0, 0, 0},
 
 	// info commands
-	{"look", doLook, POS_DEAD, 0, LOG_NORMAL},
-	{"scan", doScan, POS_DEAD, 0, LOG_NORMAL},
+	{"look", doLook, positions.POS_DEAD, 0, LOG_NORMAL},
+	{"scan", doScan, positions.POS_DEAD, 0, LOG_NORMAL},
+	{"inspect", doInspect, positions.POS_DEAD, 0, LOG_NORMAL}, // TODO: make this admin only
 
 	// object commands
-	{"get", doGet, POS_DEAD, 0, LOG_NORMAL},
-	{"drop", doDrop, POS_DEAD, 0, LOG_NORMAL},
+	{"get", doGet, positions.POS_DEAD, 0, LOG_NORMAL},
+	{"drop", doDrop, positions.POS_DEAD, 0, LOG_NORMAL},
 
 	// player commands
-	{"inventory", doInventory, POS_DEAD, 0, LOG_NORMAL},
+	{"inventory", doInventory, positions.POS_DEAD, 0, LOG_NORMAL},
+
+	// battle commands
+	{"kill", doKill, positions.POS_DEAD, 0, LOG_NORMAL},
 
 	// Miscellaneous
-	{"qui", doQui, POS_DEAD, 0, LOG_NORMAL},
-	{"quit", doQuit, POS_DEAD, 0, LOG_NORMAL},
+	{"qui", doQui, positions.POS_DEAD, 0, LOG_NORMAL},
+	{"quit", doQuit, positions.POS_DEAD, 0, LOG_NORMAL},
 }
 
 func doQui(ch *world.Character, args string) error {

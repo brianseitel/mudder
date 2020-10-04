@@ -1,6 +1,7 @@
 package world
 
 import (
+	"github.com/brianseitel/mudder/internal/positions"
 	"github.com/rs/zerolog/log"
 )
 
@@ -43,7 +44,7 @@ func (w *World) Populate() {
 				count := 0
 				room := findRoom(w, res.Room)
 				add := true
-				for _, mob := range room.Mobs {
+				for _, mob := range room.People {
 					if mob.VNUM == res.VNUM {
 						count++
 						if count == res.Limit {
@@ -55,8 +56,13 @@ func (w *World) Populate() {
 
 				if add {
 					mob, ok := w.Mobs[res.VNUM]
+					// take mob index data and convert to a non-player character
+					npc := mob.ToCharacter()
+					npc.CurrentRoom = room
+					npc.Position = positions.POS_STANDING
+
 					if ok {
-						room.Mobs = append(room.Mobs, &mob)
+						room.People = append(room.People, npc)
 					}
 				}
 			case ResetReadObject:

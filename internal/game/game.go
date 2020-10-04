@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/brianseitel/mudder/internal/lexer"
+	"github.com/brianseitel/mudder/internal/positions"
 	"github.com/brianseitel/mudder/internal/world"
 	"github.com/brianseitel/mudder/internal/world/loader"
 	"github.com/fatih/color"
@@ -33,14 +34,27 @@ func bootstrap() {
 	gameWorld.World.Zones = loader.Load()
 	gameWorld.World.Populate()
 
-	findRoom(1324236)
 	gameWorld.Character = &world.Character{
 		CurrentRoom: findRoom(3700),
+
+		Position: positions.POS_STANDING,
+
+		Level: 1,
+
+		HitPoints:    100,
+		MaxHitPoints: 100,
+		Mana:         100,
+		MaxMana:      100,
+		Movement:     100,
+		MaxMovement:  100,
 	}
 }
 
 func Start() {
 	bootstrap()
+
+	// start updates
+	go ticker()
 
 	_ = interpret("look")
 	for {
@@ -107,7 +121,7 @@ func prompt(ch *world.Character) string {
 	mana := white(fmt.Sprintf("<%d/%dm>", ch.Mana, ch.MaxMana))
 	mv := yellow(fmt.Sprintf("<%d/%dmv>", ch.Movement, ch.MaxMovement))
 
-	ch.Send(fmt.Sprintf("%s%s%s", hp, mana, mv))
+	ch.Print(fmt.Sprintf("%s%s%s ", hp, mana, mv))
 
 	reader := bufio.NewReader(os.Stdin)
 	text, _ := reader.ReadString('\n')
