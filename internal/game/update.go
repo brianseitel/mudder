@@ -32,7 +32,7 @@ func updateViolence() {
 	if ch.Position >= positions.POS_RESTING && ch.CurrentRoom == victim.CurrentRoom {
 		multiHit(ch, victim)
 	} else {
-		stopFighting(ch, victim)
+		stopFighting(ch, false)
 	}
 
 	if victim.Fighting == nil {
@@ -42,6 +42,6 @@ func updateViolence() {
 	if victim.Position > positions.POS_RESTING && ch.CurrentRoom == victim.CurrentRoom {
 		multiHit(victim, ch)
 	} else {
-		stopFighting(victim, ch)
+		stopFighting(victim, false)
 	}
 }

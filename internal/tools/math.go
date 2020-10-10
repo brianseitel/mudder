@@ -20,3 +20,30 @@ func Fuzz(i int) int {
 
 	return i
 }
+
+func Min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func Max(a, b int) int {
+	if a > b {
+		return a
+	}
+
+	return b
+}
+
+func Range(a, b, c int) int {
+	if b < a {
+		return a
+	}
+
+	if b > c {
+		return c
+	}
+
+	return b
+}

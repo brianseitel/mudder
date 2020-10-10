@@ -41,6 +41,12 @@ func bootstrap() {
 
 		Level: 1,
 
+		PCData: &world.PCData{
+			Level: 1,
+		},
+
+		Name:         "George",
+		Keywords:     "Your mom",
 		HitPoints:    100,
 		MaxHitPoints: 100,
 		Mana:         100,
