@@ -44,6 +44,7 @@ var commandsMap = []Command{
 
 	// player commands
 	{"inventory", doInventory, positions.POS_DEAD, 0, LOG_NORMAL},
+	{"save", doSave, positions.POS_DEAD, 0, LOG_NORMAL},
 
 	// battle commands
 	{"kill", doKill, positions.POS_DEAD, 0, LOG_NORMAL},

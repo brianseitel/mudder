@@ -14,3 +14,7 @@ func doInventory(ch *world.Character, args string) error {
 	}
 	return nil
 }
+
+func doSave(ch *world.Character, args string) error {
+	return ch.Save()
+}

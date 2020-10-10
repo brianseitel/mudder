@@ -1,7 +1,10 @@
 package world
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/brianseitel/mudder/internal/positions"
 	"github.com/brianseitel/mudder/internal/tools"
@@ -11,77 +14,96 @@ import (
 const LEVEL_HERO = 50
 
 type Character struct {
-	IndexData *Mobile
+	IndexData *Mobile `json:"-"`
 
-	CurrentRoom *Room
-
+	CurrentRoom      *Room `json:"-"`
+	CurrentRoomIndex int   `json:"current_room_index"`
 	// If this is nil, then it's a mob
 	// and not a player
-	PCData *PCData
+	PCData *PCData `json:"pc_data"`
 
 	// Core character data
-	VNUM             int // used for mobs
-	Name             string
-	Keywords         string // "name" for mobs
-	ShortDescription string
-	LongDescription  string
-	Description      string
-	Sex              int
-	Class            int
-	Race             int
-	Level            int
-	Trust            int
-	Played           int
+	VNUM             int    `json:"vnum"` // used for mobs
+	Name             string `json:"name"`
+	Keywords         string `json:"keywords"` // "name" for mobs
+	ShortDescription string `json:"short_description"`
+	LongDescription  string `json:"long_description"`
+	Description      string `json:"description"`
+	Sex              int    `json:"sex"`
+	Class            int    `json:"class"`
+	Race             int    `json:"race"`
+	Level            int    `json:"level"`
+	Trust            int    `json:"trust"`
+	Played           int    `json:"played"`
 
 	// Stuff it's carrying
-	Inventory []*Object
+	Inventory []*Object `json:"inventory"`
 
 	// HP, Mana, Move
-	HitPoints    int
-	MaxHitPoints int
-	Mana         int
-	MaxMana      int
-	Movement     int
-	MaxMovement  int
+	HitPoints    int `json:"hp"`
+	MaxHitPoints int `json:"max_hp"`
+	Mana         int `json:"mana"`
+	MaxMana      int `json:"max_mana"`
+	Movement     int `json:"mv"`
+	MaxMovement  int `json:"max_mv"`
 
-	Gold       int
-	Experience int
+	Gold       int `json:"gold"`
+	Experience int `json:"xp"`
 
 	// Flags
-	ActFlags   int
-	AffectedBy int
-	Position   int
+	ActFlags   int `json:"act_flags"`
+	AffectedBy int `json:"affected_by"`
+	Position   int `json:"position"`
 
-	Practices int
-	Alignment int
+	Practices int `json:"practices"`
+	Alignment int `json:"alignment"`
 
 	// Fight stuff
-	Fighting *Character
-	Hitroll  int
-	Damroll  int
-	Armor    int
+	Fighting *Character `json:"-"`
+	Hitroll  int        `json:"-"`
+	Damroll  int        `json:"-"`
+	Armor    int        `json:"-"`
 }
 
 type PCData struct {
-	Password string
-	Title    string
+	Password string `json:"password"`
+	Title    string `json:"title"`
 
-	Level int
+	Level int `json:"level"`
 
-	Bamfin  string
-	Bamfout string
+	Bamfin  string `json:"bamfin"`
+	Bamfout string `json:"bamfout"`
 
-	Strength     int
-	Intelligence int
-	Wisdom       int
-	Dexterity    int
-	Constitution int
+	Strength     int `json:"str"`
+	Intelligence int `json:"int"`
+	Wisdom       int `json:"wis"`
+	Dexterity    int `json:"dex"`
+	Constitution int `json:"con"`
 
-	ModifiedStrength     int
-	ModifiedIntelligence int
-	ModifiedWisdom       int
-	ModifiedDexterity    int
-	ModifiedConstitution int
+	ModifiedStrength     int `json:"-"`
+	ModifiedIntelligence int `json:"-"`
+	ModifiedWisdom       int `json:"-"`
+	ModifiedDexterity    int `json:"-"`
+	ModifiedConstitution int `json:"-"`
+}
+
+func (p *Character) Save() error {
+	p.CurrentRoomIndex = p.CurrentRoom.VNUM
+
+	f, err := os.Create("players/" + tools.Slug(strings.ToLower(p.Name)) + ".json")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	out, err := json.MarshalIndent(p, "", "    ")
+	if err != nil {
+		panic(err)
+	}
+
+	p.Send("Character saved.")
+	_, err = f.Write(out)
+	return err
 }
 
 func (p *Character) Send(str interface{}) {

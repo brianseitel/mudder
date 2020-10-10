@@ -4,14 +4,17 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/brianseitel/mudder/internal/lexer"
-	"github.com/brianseitel/mudder/internal/positions"
+	"github.com/brianseitel/mudder/internal/tools"
 	"github.com/brianseitel/mudder/internal/world"
 	"github.com/brianseitel/mudder/internal/world/loader"
+
 	"github.com/fatih/color"
+	"github.com/pquerna/ffjson/ffjson"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -34,26 +37,32 @@ func bootstrap() {
 	gameWorld.World.Zones = loader.Load()
 	gameWorld.World.Populate()
 
-	gameWorld.Character = &world.Character{
-		CurrentRoom: findRoom(3700),
-
-		Position: positions.POS_STANDING,
-
-		Level: 1,
-
-		PCData: &world.PCData{
-			Level: 1,
-		},
-
-		Name:         "George",
-		Keywords:     "Your mom",
-		HitPoints:    100,
-		MaxHitPoints: 100,
-		Mana:         100,
-		MaxMana:      100,
-		Movement:     100,
-		MaxMovement:  100,
+	ch, err := loadCharacter("george")
+	if err != nil {
+		panic(err)
 	}
+
+	gameWorld.Character = ch
+}
+
+func loadCharacter(name string) (*world.Character, error) {
+	f, err := os.Open("players/" + tools.Slug(strings.ToLower(name)) + ".json")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	body, err := ioutil.ReadAll(f)
+	if err != nil {
+		panic(err)
+	}
+
+	var ch world.Character
+	err = ffjson.Unmarshal(body, &ch)
+	ch.CurrentRoom = findRoom(ch.CurrentRoomIndex)
+
+	return &ch, err
+
 }
 
 func Start() {
