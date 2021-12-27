@@ -1,178 +1,178 @@
 package world
 
 type Zone struct {
-	Area     Area
-	Helps    []Help
-	Mobiles  []*Mobile
-	Objects  []Object
-	Rooms    []*Room
-	Resets   []Reset
-	Shops    []Shop
-	Specials []Special
+	Area     Area      `json:"areas"`
+	Helps    []Help    `json:"helps"`
+	Mobiles  []*Mobile `json:"mobiles"`
+	Objects  []Object  `json:"objects"`
+	Rooms    []*Room   `json:"rooms"`
+	Resets   []Reset   `json:"resets"`
+	Shops    []Shop    `json:"shops"`
+	Specials []Special `json:"specials"`
 }
 
 type Area struct {
-	Raw string // raw data
+	Raw string `json:"-"` // raw data
 
 	// parsed out
-	Name     string
-	MinLevel int
-	MaxLevel int
-	Author   string
+	Name     string `json:"name"`
+	MinLevel int    `json:"min_level"`
+	MaxLevel int    `json:"max_level"`
+	Author   string `json:"author"`
 }
 
 type Help struct {
-	Raw string // raw data
+	Raw string `json:"-"` // raw data
 
-	Level    int
-	Keywords string
-	Text     string
+	Level    int    `json:"level"`
+	Keywords string `json:"keywords"`
+	Text     string `json:"text"`
 }
 
 type Mobile struct {
-	Raw string // raw data
+	Raw string `json:"-"` // raw data
 
-	VNUM             int
-	Keywords         string
-	ShortDescription string
-	LongDescription  string
-	Description      string
-	ActFlags         int
-	AffectedFlags    int
-	Alignment        int
-	Level            int
-	Sex              int
+	VNUM             int    `json:"vnum"`
+	Keywords         string `json:"keywords"`
+	ShortDescription string `json:"short_description"`
+	LongDescription  string `json:"long_description"`
+	Description      string `json:"description"`
+	ActFlags         int    `json:"act_flags"`
+	AffectedFlags    int    `json:"affected_flags"`
+	Alignment        int    `json:"alignment"`
+	Level            int    `json:"level"`
+	Sex              int    `json:"sex"`
 }
 
 type Object struct {
-	Raw string // raw data
+	Raw string `json:"-"` // raw data
 
-	VNUM             int
-	Keywords         string
-	ShortDescription string
-	LongDescription  string
-	ItemType         int
-	ExtraFlags       int
-	WearFlags        int
-	Value0           int
-	Value1           int
-	Value2           int
-	Value3           int
-	Weight           int
-	ExtraDescription []extraDescription
-	Apply            []apply
+	VNUM             int                `json:"vnum"`
+	Keywords         string             `json:"keywords"`
+	ShortDescription string             `json:"short_description"`
+	LongDescription  string             `json:"long_description"`
+	ItemType         int                `json:"item_type"`
+	ExtraFlags       int                `json:"extra_flags"`
+	WearFlags        int                `json:"wear_flags"`
+	Value0           int                `json:"value0"`
+	Value1           int                `json:"value1"`
+	Value2           int                `json:"value2"`
+	Value3           int                `json:"value3"`
+	Weight           int                `json:"weight"`
+	ExtraDescription []extraDescription `json:"extra_description"`
+	Apply            []apply            `json:"apply"`
 }
 
 type extraDescription struct {
-	Raw string // raw data
+	Raw string `json:"-"` // raw data
 
-	Keywords    string
-	Description string
+	Keywords    string `json:"keywords"`
+	Description string `json:"descriptions"`
 }
 
 type apply struct {
-	Raw string // raw data
+	Raw string `json:"-"` // raw data
 
-	ApplyType  int
-	ApplyValue int
+	ApplyType  int `json:"apply_type"`
+	ApplyValue int `json:"apply_values"`
 }
 
 type Room struct {
-	VNUM                 int
-	Name                 string
-	Description          string
-	Area                 int
-	RoomFlags            int
-	SectorType           int
-	Doors                []door
-	ExtendedDescriptions []extendedDescription
+	VNUM                 int                   `json:"vnum"`
+	Name                 string                `json:"name"`
+	Description          string                `json:"description"`
+	Area                 int                   `json:"area"`
+	RoomFlags            int                   `json:"room_flags"`
+	SectorType           int                   `json:"sector_type"`
+	Doors                []door                `json:"doors"`
+	ExtendedDescriptions []extendedDescription `json:"extended_descriptions"`
 }
 
 type door struct {
-	Door        int
-	Description string
-	Keywords    string
-	Locks       int
-	Key         int
-	ToRoom      int
+	Door        int    `json:"door"`
+	Description string `json:"description"`
+	Keywords    string `json:"keywords"`
+	Locks       int    `json:"locks"`
+	Key         int    `json:"key"`
+	ToRoom      int    `json:"to_room"`
 }
 
 type extendedDescription struct {
-	Keywords    string
-	Description string
+	Keywords    string `json:"keywords"`
+	Description string `json:"description"`
 }
 
 type Reset interface{}
 
 type resetComment struct {
-	Comment string
+	Comment string `json:"comment"`
 }
 
 type resetReadMobile struct {
-	VNUM    int
-	Limit   int
-	Room    int
-	Comment string
+	VNUM    int    `json:"vnum"`
+	Limit   int    `json:"limit"`
+	Room    int    `json:"room"`
+	Comment string `json:"comment"`
 }
 
 type resetReadObject struct {
-	VNUM    int
-	Room    int
-	Comment string
+	VNUM    int    `json:"vnum"`
+	Room    int    `json:"room"`
+	Comment string `json:"comment"`
 }
 
 type resetPutObject struct {
-	VNUM          int
-	ContainerItem int
-	Comment       string
+	VNUM          int    `json:"vnum"`
+	ContainerItem int    `json:"container_item"`
+	Comment       string `json:"comment"`
 }
 
 type resetGiveObject struct {
-	VNUM    int
-	Comment string
+	VNUM    int    `json:"vnum"`
+	Comment string `json:"comment"`
 }
 
 type resetEquipObject struct {
-	VNUM         int
-	WearLocation int
-	Comment      string
+	VNUM         int    `json:"vnum"`
+	WearLocation int    `json:"wear_location"`
+	Comment      string `json:"comment"`
 }
 
 type resetSetDoorState struct {
-	VNUM    int
-	Door    int
-	State   int
-	Comment string
+	VNUM    int    `json:"vnum"`
+	Door    int    `json:"door"`
+	State   int    `json:"state"`
+	Comment string `json:"comment"`
 }
 
 type resetRandomizeExits struct {
-	VNUM     int // room vnum
-	LastDoor int
-	Comment  string
+	VNUM     int    `json:"vnum"` // room vnum
+	LastDoor int    `json:"last_door"`
+	Comment  string `json:"comment"`
 }
 
 type Shop struct {
-	Keeper     int
-	Trade0     int
-	Trade1     int
-	Trade2     int
-	Trade3     int
-	Trade4     int
-	ProfitBuy  int
-	ProfitSell int
-	OpenHour   int
-	CloseHour  int
-	Comment    string
+	Keeper     int    `json:"keeper"`
+	Trade0     int    `json:"trade0"`
+	Trade1     int    `json:"trade1"`
+	Trade2     int    `json:"trade2"`
+	Trade3     int    `json:"trade3"`
+	Trade4     int    `json:"trade4"`
+	ProfitBuy  int    `json:"profit_buy"`
+	ProfitSell int    `json:"profit_sell"`
+	OpenHour   int    `json:"open_hour"`
+	CloseHour  int    `json:"close_hour"`
+	Comment    string `json:"comment"`
 }
 
 type Special interface{}
 
 type specialsComment struct {
-	Comment string
+	Comment string `json:"comment"`
 }
 
 type specialsMob struct {
-	VNUM    int
-	SpecFun string
-	Comment string
+	VNUM    int    `json:"vnum"`
+	SpecFun string `json:"spec_fun"`
+	Comment string `json:"comment"`
 }

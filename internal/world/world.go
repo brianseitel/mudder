@@ -1,5 +1,5 @@
 package world
 
 type World struct {
-	Zones []*Zone
+	Zones []*Zone `json:"zones"`
 }
